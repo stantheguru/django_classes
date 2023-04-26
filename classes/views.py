@@ -3,9 +3,12 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views import View
 from . forms import NameForm
 from django.shortcuts import render
+import logging
 
 
-
+# Configure the logger
+logging.basicConfig(filename='app.log', level=logging.DEBUG,
+                    format='%(asctime)s:%(levelname)s:%(message)s')
 
 class AsyncView(View):
     async def get(self, request, *args, **kwargs):
@@ -15,6 +18,7 @@ class AsyncView(View):
 
 
 def get_name(request):
+    logging.info('Starting name function')
     # if this is a POST request we need to process the form data
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
@@ -24,6 +28,7 @@ def get_name(request):
             # process the data in form.cleaned_data as required
             # ...
             # redirect to a new URL:
+            logging.info('Exiting fetch function')
             return HttpResponseRedirect("/thanks/")
 
     # if a GET (or any other method) we'll create a blank form
@@ -34,6 +39,7 @@ def get_name(request):
 
 
 class MyFormView(View):
+    logging.info('Starting name function')
     form_class = NameForm
     initial = {"key": "value"}
     template_name = "name.html"
@@ -46,6 +52,7 @@ class MyFormView(View):
         form = self.form_class(request.POST)
         if form.is_valid():
             # <process form cleaned data>
+            logging.info('Exiting fetch function')
             return HttpResponseRedirect("/success")
 
         return render(request, self.template_name, {"form": form})
